@@ -224,15 +224,21 @@ window.onload = function(){
 //redirige a snake.html
 let button = function(){
 
+  let exp = new RegExp ('[a-zA-Z]+\\s*[a-zA-Z]*');
   var name = document.getElementById("names").value;
+
+  var campo = exp.test(name);
+
+
+  if(campo){
+
   localStorage.setItem("name" , name );
 
 
+
+
   window.location.href = "snake.html";
-
-    
-
-    
+}
 }
 
 let retry = function(){
