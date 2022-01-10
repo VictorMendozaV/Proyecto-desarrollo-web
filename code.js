@@ -27,6 +27,7 @@
 
  let score = 0;
  let point = 1;
+ var timeout;
 
 // variables de estado 
   let state = {
@@ -81,12 +82,13 @@ function tick(){
         }    
     }else if (state.runState === STATE_LOSING) {
 
-
+      let time = document.getElementById('crono');
       
-      localStorage.setItem("score" ,score );
-
+      localStorage.setItem("score" ,(score - 1 ));
+      localStorage.setItem("time" , time.textContent )
       interval = 10;
       
+
        
       if (state.snake.length > 0) {
         state.snake.splice(0, 1); // borra a la serpiente cuadro por cuadro de manera secuencial
@@ -105,10 +107,7 @@ function tick(){
 
         score = 0;
       }
-      
-    
-    
-    
+          
     }
 
     
@@ -135,11 +134,6 @@ function tick(){
     setTimeout(tick, interval);//indica el intervalo de tiempo entre frames
     
 }
-
-
-
-
-
 
 
 //deteccion de colisiones
@@ -198,9 +192,12 @@ function draw(){
 }
 
 //control de direccion
-window.onload = function(){
+window.onload = function(){  
+  detenerReloj();
+  empezarReloj();
     state.canvas = document.querySelector('canvas');//selecciona el elemento canvas
     state.context = state.canvas.getContext('2d');//identificador del contextor del dibujo 
+    
     
 
     window.onkeydown = function(e){
@@ -221,57 +218,46 @@ window.onload = function(){
 
 };
 
-//redirige a snake.html
-let button = function(){
-
-  let exp = new RegExp ('[a-zA-Z]+\\s*[a-zA-Z]*');
-  var name = document.getElementById("names").value;
-
-  var campo = exp.test(name);
-
-
-  if(campo){
-
-  localStorage.setItem("name" , name );
 
 
 
 
-  window.location.href = "snake.html";
-}
-}
+function empezarReloj() {
 
-let retry = function(){
-
-  window.location.href = "login.html";
-
-
-}
-
-
-
-//clase player, representa al jugador
-let player = class{
-
-  //metodo constructor de la clase
-  player(name , score){
-      this.name = name;
-      this.score = score; 
+    if (timeout == 0) {
+        // empezar el cronometro
+  
+        // Obtenemos el valor actual
+        inicio = vuelta = new Date().getTime();
+  
+        // iniciamos el proceso
+        funcionando();
+    }
   }
-//regresa el nombre del jugador
-  getName(){
-      return this.name;
+
+  //detiene el reloj y
+  function detenerReloj(){
+    clearTimeout(timeout);
+    timeout=0;
   }
-//modifica el nombre del jugador
-  setName(name){
-      this.name = name;
+  
+  function funcionando()
+  {
+    // obteneos la fecha actual
+    var actual = new Date().getTime();
+  
+    // obtenemos la diferencia entre la fecha actual y la de inicio
+    var diff  = new Date(actual-inicio);
+  
+    // mostramos la diferencia entre la fecha actual y la inicial
+    var result = LeadingZero(diff.getUTCHours())+":"+LeadingZero(diff.getUTCMinutes())+":"+LeadingZero(diff.getUTCSeconds());
+    document.getElementById('crono').innerHTML = result;
+  
+    // Indicamos que se ejecute esta función nuevamente dentro de 1 segundo
+    timeout=setTimeout("funcionando()",1000);
   }
-//regresa el puntaje del jugador
-  getScore(){
-      return this.score;
+  
+  /* Funcion que pone un 0 delante de un valor si es necesario */
+  function LeadingZero(Time) {
+    return (Time < 10) ? "0" + Time : + Time;
   }
-//modifica del puntaje del jugador
-  setScore(score){
-      this.score = score;
-  }
-}
